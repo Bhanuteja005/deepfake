@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Deepfake Detection Results | DeepFake Detector</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2A2F4F;
+            --secondary: #917FB3;
+            --accent: #FDE2F3;
+            --light: #E5BEEC;
+            --dark: #20232e;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --gradient: linear-gradient(135deg, #917FB3, #2A2F4F);
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.3s ease;
+            background-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--accent) !important;
+            font-size: 1.8rem;
+        }
+
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            margin: 0 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover:after {
+            width: 100%;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1639322537504-6427a16b0a28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin-top: 76px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(42, 47, 79, 0.8);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            color: var(--text-light);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--accent), var(--light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* ===== RESULTS SECTION ===== */
+        .results-section {
+            padding: 80px 0;
+            position: relative;
+            background: linear-gradient(135deg, #ffffff, #f5f5f5);
+            overflow: hidden;
+        }
+
+        .results-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(145, 127, 179, 0.2), rgba(42, 47, 79, 0.1));
+        }
+
+        .results-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(253, 226, 243, 0.2), rgba(229, 190, 236, 0.1));
+        }
+
+        .result-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .result-header {
+            background: var(--gradient);
+            color: white;
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .result-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            position: relative;
+        }
+
+        .result-body {
+            padding: 40px;
+        }
+
+        /* Video Player */
+        .video-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-wrapper:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .play-btn i {
+            color: white;
+            font-size: 2rem;
+            margin-left: 8px;
+        }
+
+        .video-controls {
+            background: rgba(42, 47, 79, 0.9);
+            border-radius: 0 0 10px 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Info Card */
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border-top: 5px solid var(--secondary);
+        }
+
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .info-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--gradient);
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item i {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #6c757d;
+        }
+
+        /* Detection Result Card */
+        .detection-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detection-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(145, 127, 179, 0.1), rgba(42, 47, 79, 0.05));
+            border-radius: 0 0 0 100%;
+        }
+
+        .detection-card h3 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 1.4rem;
+            position: relative;
+        }
+
+        .progress-circle-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+        }
+
+        .progress-circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-circle-bg {
+            stroke: #f0f0f0;
+        }
+
+        .progress-circle-value {
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .result-verdict {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 20px 0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        .result-explanation {
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Verdict styles */
+        .verdict-real {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .verdict-suspicious {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .verdict-fake {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        /* Action Buttons */
+        .actions {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        .action-btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--secondary);
+        }
+
+        .action-btn-secondary:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1541728472741-03e45a58cf88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 100px 0;
+            color: white;
+        }
+
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(42, 47, 79, 0.9);
+        }
+
+        .stats-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .stats-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--accent), var(--light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stats-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Recommendations Section */
+        .recommendations-section {
+            padding: 100px 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #6c757d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendation-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .recommendation-header {
+            padding: 25px;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .recommendation-body {
+            padding: 25px;
+        }
+
+        .recommendation-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .recommendation-text {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: var(--text-light);
+            padding: 80px 0 30px;
+        }
+
+        .footer-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .footer-text {
+            color: #adb5bd;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--secondary);
+            transform: translateY(-5px);
+        }
+
+        .footer-heading {
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .contact-item {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+
+        .contact-info {
+            color: #adb5bd;
+            line-height: 1.6;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+            color: #adb5bd;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .result-body {
+                padding: 30px;
+            }
+            .detection-card {
+                margin-top: 30px;
+            }
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .stats-value {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.3rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            .result-body {
+                padding: 25px;
+            }
+            .info-card, .detection-card {
+                padding: 25px;
+            }
+            .actions {
+                flex-direction: column;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .recommendation-card {
+                margin-bottom: 30px;
+            }
+            .footer-col {
+                margin-bottom: 40px;
+            }
+            .progress-circle-container {
+                width: 160px;
+                height: 160px;
+            }
+            .progress-text {
+                font-size: 2rem;
+            }
+            .stats-section {
+                padding: 70px 0;
+            }
+            .stats-card {
+                margin-bottom: 40px;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-100 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-200 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-300 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-400 {
+            transition-delay: 0.4s;
+        }
+
+        .delay-500 {
+            transition-delay: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">DeepFake<span style="color: var(--light)">Detector</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#detect">Detect Now</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#recommendations">Recommendations</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="top">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Deepfake Analysis Complete</h1>
+                <p class="hero-subtitle">Our advanced AI has thoroughly analyzed your media for signs of manipulation. Scroll down to see the detailed results.</p>
+                <a href="#results" class="action-btn">
+                    <i class="fas fa-chart-bar"></i> View Results
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results">
+        <div class="container result-container">
+            <div class="result-card fade-in">
+                <div class="result-header">
+                    <h2>Analysis Results</h2>
+                </div>
+                <div class="result-body">
+                    <div class="row">
+                        <!-- Left Column - Video and Info -->
+                        <div class="col-lg-8 fade-in delay-100">
+                            <!-- Video Player -->
+                            <div class="video-wrapper">
+                                <div class="video-container">
+                                    <video id="resultVideo" poster="/static/img/video-poster.jpg" preload="auto" controls>
+                                        <source src="{{ video_url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div class="video-overlay">
+                                        <div class="play-btn" onclick="togglePlay()">
+                                            <i class="fas fa-play" id="playIcon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="video-controls">
+                                    <button class="control-btn" onclick="togglePlay()">
+                                        <i class="fas fa-play" id="controlPlayIcon"></i>
+                                        <span id="playText">Play</span>
+                                    </button>
+                                    <button class="control-btn" onclick="restartVideo()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button class="control-btn" onclick="toggleMute()">
+                                        <i class="fas fa-volume-up" id="muteIcon"></i>
+                                    </button>
+                                    <button class="control-btn" onclick="toggleFullscreen()">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Media Information -->
+                            <div class="info-card fade-in delay-200">
+                                <h3>Media Information</h3>
+                                <div class="info-item">
+                                    <i class="fas fa-file-video"></i>
+                                    <div class="info-content">
+                                        <div class="info-label">File Name</div>
+                                        <div class="info-value">{{ video_info['name'] }}</div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-weight"></i>
+                                    <div class="info-content">
+                                        <div class="info-label">File Size</div>
+                                        <div class="info-value">{{ video_info['size'] }}</div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-user"></i>
+                                    <div class="info-content">
+                                        <div class="info-label">Uploaded By</div>
+                                        <div class="info-value">{{ video_info['user'] }}</div>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <div class="info-content">
+                                        <div class="info-label">Analysis Date</div>
+                                        <div class="info-value">{{ video_info['source'] }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - Detection Results -->
+                        <div class="col-lg-4">
+                            <div class="detection-card fade-in delay-300">
+                                <h3>Deepfake Detection Results</h3>
+                                
+                                <!-- Circular Progress -->
+                                <div class="progress-circle-container">
+                                    <svg width="200" height="200" viewBox="0 0 200 200">
+                                        <circle class="progress-circle progress-circle-bg" cx="100" cy="100" r="90"></circle>
+                                        <circle class="progress-circle progress-circle-value" id="progressCircle" 
+                                                cx="100" cy="100" r="90" 
+                                                stroke-dasharray="0 565.48" stroke="#28a745"></circle>
+                                    </svg>
+                                    <div class="progress-text" id="progressText">0%</</div>
+                                </div>
+                                
+                                <!-- Verdict -->
+                                <div id="verdictContainer">
+                                    <div class="result-verdict" id="verdict">Analyzing...</div>
+                                    <p class="result-explanation" id="explanation">
+                                        Our AI is evaluating the content for signs of manipulation.
+                                    </p>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="actions fade-in delay-400">
+                                    <a href="/" class="action-btn">
+                                        <i class="fas fa-home"></i> Back to Home
+                                    </a>
+                                    <a href="/#detect" class="action-btn action-btn-secondary">
+                                        <i class="fas fa-upload"></i> Test Another
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container stats-container">
+            <div class="row">
+                <div class="col-md-4 fade-in">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-photo-video"></i>
+                        </div>
+                        <div class="stats-value" data-count="1500">0</div>
+                        <div class="stats-label">Media Files Analyzed</div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in delay-200">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stats-value" data-count="98">0</div>
+                        <div class="stats-label">Detection Accuracy %</div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in delay-400">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stats-value" data-count="750">0</div>
+                        <div class="stats-label">Deepfakes Identified</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="recommendations-section" id="recommendations">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Recommendations</h2>
+                <p>Based on your analysis, here are some steps you can take to protect yourself against deepfakes.</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4 fade-in delay-100">
+                    <div class="recommendation-card">
+                        <div class="recommendation-header">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="recommendation-body">
+                            <h3 class="recommendation-title">Verify Sources</h3>
+                            <p class="recommendation-text">
+                                Always check the source of media content before believing or sharing it. 
+                                Look for multiple credible sources that confirm the same information.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 fade-in delay-300">
+                    <div class="recommendation-card">
+                        <div class="recommendation-header">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-glasses"></i>
+                            </div>
+                        </div>
+                        <div class="recommendation-body">
+                            <h3 class="recommendation-title">Look for Inconsistencies</h3>
+                            <p class="recommendation-text">
+                                Pay attention to unnatural facial expressions, weird lighting patterns, 
+                                or audio that doesn't sync with lip movements.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 fade-in delay-500">
+                    <div class="recommendation-card">
+                        <div class="recommendation-header">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                        </div>
+                        <div class="recommendation-body">
+                            <h3 class="recommendation-title">Use Detection Tools</h3>
+                            <p class="recommendation-text">
+                                Regularly use deepfake detection tools like ours to verify suspicious content 
+                                before accepting it as authentic.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 footer-col">
+                    <a href="/" class="footer-brand">DeepFake<span style="color: var(--light)">Detector</span></a>
+                    <p class="footer-text">
+                        We're dedicated to combating misinformation and fake media through advanced 
+                        artificial intelligence and machine learning technologies.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/#features">Features</a></li>
+                        <li><a href="/#detect">Detect Now</a></li>
+                        <li><a href="#recommendations">Recommendations</a></li>
+                        <li><a href="#top">Back to Top</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 footer-col">
+                    <h4 class="footer-heading">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Research</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-12 footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-info">
+                            123 AI Avenue, Tech City<br>
+                            Silicon Valley, CA 94025
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info">
+                            +1 (555) 123-4567<br>
+                            +1 (555) 987-6543
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info">
+                            info@deepfakedetector.io<br>
+                            support@deepfakedetector.io
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 DeepFake Detector. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Debug information to help troubleshoot video loading
+            console.log("Video URL: {{ video_url }}");
+            
+            // Check if video exists
+            fetch("{{ video_url }}")
+                .then(response => {
+                    if(response.ok) {
+                        console.log("Video file exists and is accessible");
+                    } else {
+                        console.error("Video file not found or not accessible", response.status);
+                    }
+                })
+                .catch(error => console.error("Error checking video:", error));
+            
+            // Video Player Controls
+            window.resultVideo = document.getElementById('resultVideo');
+            window.playIcon = document.getElementById('playIcon');
+            window.controlPlayIcon = document.getElementById('controlPlayIcon');
+            window.playText = document.getElementById('playText');
+            window.muteIcon = document.getElementById('muteIcon');
+            
+            // Load and initialize the video
+            resultVideo.addEventListener('loadeddata', function() {
+                // Set a poster if video fails to load
+                this.poster = this.poster || '/static/img/video-placeholder.jpg';
+            });
+            
+            resultVideo.addEventListener('error', function(e) {
+                console.error("Video error:", e);
+                console.error("Video URL:", "{{ video_url }}");
+                // Show error message or fallback image
+                this.poster = '/static/img/video-error.jpg';
+            });
+            
+            // Animation for elements
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Animate count up for statistics
+            const countElements = document.querySelectorAll('.stats-value');
+            const statsObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const countTo = parseInt(target.getAttribute('data-count'));
+                        let count = 0;
+                        const interval = setInterval(() => {
+                            count += Math.ceil(countTo / 30);
+                            if (count >= countTo) {
+                                target.innerText = countTo;
+                                clearInterval(interval);
+                            } else {
+                                target.innerText = count;
+                            }
+                        }, 30);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            countElements.forEach(element => {
+                statsObserver.observe(element);
+            });
+            
+            // Update detection result with animation
+            setTimeout(updateDetectionResult, 1000);
+        });
+        
+        // Video control functions
+        function togglePlay() {
+            if (resultVideo.paused) {
+                resultVideo.play();
+                playIcon.className = 'fas fa-pause';
+                controlPlayIcon.className = 'fas fa-pause';
+                playText.textContent = 'Pause';
+            } else {
+                resultVideo.pause();
+                playIcon.className = 'fas fa-play';
+                controlPlayIcon.className = 'fas fa-play';
+                playText.textContent = 'Play';
+            }
+        }
+        
+        function toggleMute() {
+            resultVideo.muted = !resultVideo.muted;
+            muteIcon.className = resultVideo.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+        }
+        
+        function restartVideo() {
+            resultVideo.currentTime = 0;
+            resultVideo.play();
+            playIcon.className = 'fas fa-pause';
+            controlPlayIcon.className = 'fas fa-pause';
+            playText.textContent = 'Pause';
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (resultVideo.requestFullscreen) {
+                    resultVideo.requestFullscreen();
+                } else if (resultVideo.mozRequestFullScreen) {
+                    resultVideo.mozRequestFullScreen();
+                } else if (resultVideo.webkitRequestFullscreen) {
+                    resultVideo.webkitRequestFullscreen();
+                } else if (resultVideo.msRequestFullscreen) {
+                    resultVideo.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+        
+        // Update detection result
+        function updateDetectionResult() {
+            const percentage = parseFloat("{{ video_info['per'] }}");
+            const circumference = 2 * Math.PI * 90; // 2πr
+            
+            const progressCircle = document.getElementById('progressCircle');
+            const progressText = document.getElementById('progressText');
+            const verdict = document.getElementById('verdict');
+            const explanation = document.getElementById('explanation');
+            
+            // Calculate stroke dasharray
+            const dasharray = (percentage / 100) * circumference;
+            
+            // Animate the progress
+            let currentPercentage = 0;
+            const duration = 1500; // Animation duration in ms
+            const interval = 20; // Update interval in ms
+            const steps = duration / interval;
+            const increment = percentage / steps;
+            
+            const timer = setInterval(() => {
+                currentPercentage += increment;
+                
+                if (currentPercentage >= percentage) {
+                    currentPercentage = percentage;
+                    clearInterval(timer);
+                }
+                
+                // Update progress circle
+                const currentDasharray = (currentPercentage / 100) * circumference;
+                progressCircle.style.strokeDasharray = `${currentDasharray} ${circumference}`;
+                progressText.textContent = `${Math.round(currentPercentage)}%`;
+                
+                // Set color and verdict based on percentage
+                let color, verdictText, verdictClass, explanationText;
+                
+                if (currentPercentage >= 75) {
+                    color = '#dc3545'; // Red - high probability of deepfake
+                    verdictText = 'Very Likely Deepfake';
+                    verdictClass = 'verdict-fake';
+                    explanationText = 'Our analysis detected multiple indicators of manipulation including unnatural facial movements, inconsistent lighting, and other telltale signs of deepfake technology.';
+                } else if (currentPercentage >= 50) {
+                    color = '#ffc107'; // Yellow - medium probability
+                    verdictText = 'Possibly Manipulated';
+                    verdictClass = 'verdict-suspicious';
+                    explanationText = 'Our analysis found some potential signs of manipulation, but the evidence is not conclusive. The media may have been altered or may contain some AI-generated elements.';
+                } else {
+                    color = '#28a745'; // Green - low probability, likely real
+                    verdictText = 'Likely Authentic';
+                    verdictClass = 'verdict-real';
+                    explanationText = 'Our analysis found minimal indicators of manipulation. This media appears to be authentic with a high degree of confidence.';
+                }
+                
+                // Apply the changes
+                progressCircle.setAttribute('stroke', color);
+                
+                if (currentPercentage === percentage) {
+                    // Only update the verdict and explanation at the end of the animation
+                    verdict.textContent = verdictText;
+                    verdict.className = `result-verdict ${verdictClass}`;
+                    explanation.textContent = explanationText;
+                }
+            }, interval);
+        }
+    </script>
+</body>
+</html>

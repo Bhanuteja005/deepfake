@@ -1,0 +1,24 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "main.py",
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "250mb",
+                "includeFiles": ["*.py", "templates/**", "static/**"],
+                "excludeFiles": ["**/*.mp4", "**/*.h5", "**/*.pth", "**/*.onnx", "**/*.weights"]
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/.*",
+            "dest": "main.py"
+        }
+    ]
+}
